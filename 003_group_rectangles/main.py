@@ -36,8 +36,12 @@ def findClickPositions(needle_img_path, haystack_img_path, threshold=0.5, debug_
         # Add every box to the list twice in order to retain single (non-overlapping) boxes
         rectangles.append(rect)
         rectangles.append(rect)
-    # Apply group rectangles
-    rectangles, weights = cv.groupRectangles(rectangles, 1, 0.5)
+    # Apply group rectangles.
+    # The groupThreshold parameter should usually be 1. If you put it at 0 then no grouping is
+    # done. If you put it at 2 then an object needs at least 3 overlapping rectangles to appear
+    # in the result. I've set eps to 0.5, which is:
+    # "Relative difference between sides of the rectangles to merge them into a group."
+    rectangles, weights = cv.groupRectangles(rectangles, groupThreshold=1, eps=0.5)
     #print(rectangles)
 
     points = []
@@ -67,12 +71,14 @@ def findClickPositions(needle_img_path, haystack_img_path, threshold=0.5, debug_
                              lineType=line_type, thickness=2)
             elif debug_mode == 'points':
                 # Draw the center point
-                cv.drawMarker(haystack_img, (center_x, center_y), marker_color, marker_type)
+                cv.drawMarker(haystack_img, (center_x, center_y), 
+                              color=marker_color, markerType=marker_type, 
+                              markerSize=40, thickness=2)
 
         if debug_mode:
             cv.imshow('Matches', haystack_img)
             cv.waitKey()
-            #cv.imwrite('result.jpg', haystack_img)
+            #cv.imwrite('result_click_point.jpg', haystack_img)
 
     return points
 
