@@ -1,6 +1,10 @@
 import numpy as np
 import win32gui, win32ui, win32con
+from ctypes import windll
 
+# Handle display scale factor
+user32 = windll.user32
+user32.SetProcessDPIAware()
 
 class WindowCapture:
 
